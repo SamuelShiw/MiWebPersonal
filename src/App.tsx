@@ -12,32 +12,61 @@ function useReducedMotion() {
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)')
     const update = () => setReduced(query.matches)
+
     update()
     query.addEventListener('change', update)
+
     return () => query.removeEventListener('change', update)
   }, [])
 
   return reduced
 }
 
-function PointerGlow() {
-  const glow = useRef<HTMLDivElement>(null)
+function PointerCrosshair() {
+  const cursor = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (window.matchMedia('(pointer: coarse)').matches) return
 
     const move = (event: PointerEvent) => {
-      if (!glow.current) return
-      glow.current.style.transform =
-        'translate3d(' + (event.clientX - 180) + 'px,' + (event.clientY - 180) + 'px,0)'
+      if (!cursor.current) return
+      cursor.current.style.transform =
+        'translate3d(' + (event.clientX - 18) + 'px,' + (event.clientY - 18) + 'px,0)'
     }
 
     window.addEventListener('pointermove', move, { passive: true })
     return () => window.removeEventListener('pointermove', move)
   }, [])
 
-  return <div ref={glow} className="pointer-glow" aria-hidden="true" />
+  return <div ref={cursor} className="crosshair" aria-hidden="true" />
 }
+
+const method = [
+  {
+    index: '01',
+    code: 'OBSERVE',
+    title: 'See the work as it is.',
+    copy: 'Before software, understand people, delays, repeated tasks, handoffs and where information gets lost.',
+  },
+  {
+    index: '02',
+    code: 'MODEL',
+    title: 'Turn reality into rules.',
+    copy: 'Map flows, states, constraints, responsibilities and data before choosing abstractions or frameworks.',
+  },
+  {
+    index: '03',
+    code: 'DESIGN',
+    title: 'Give the system structure.',
+    copy: 'Define boundaries, permissions, failure paths, auditability and the trade-offs that matter.',
+  },
+  {
+    index: '04',
+    code: 'BUILD',
+    title: 'Ship the useful part first.',
+    copy: 'Implement small, verifiable pieces that remove friction for real users and can evolve without collapsing.',
+  },
+]
 
 export default function App() {
   const root = useRef<HTMLDivElement>(null)
@@ -72,37 +101,38 @@ export default function App() {
 
     const context = gsap.context(() => {
       if (reducedMotion) {
-        gsap.set('.intro-screen', { display: 'none' })
+        gsap.set('.boot-screen', { display: 'none' })
         return
       }
 
-      const intro = gsap.timeline()
-      intro
-        .from('.intro-kicker', { opacity: 0, y: 12, duration: 0.5 })
-        .from('.intro-line span', { scaleX: 0, duration: 0.85, ease: 'power3.inOut' }, '-=0.18')
-        .from('.intro-mark', { opacity: 0, scale: 0.82, duration: 0.45 }, '-=0.3')
-        .to('.intro-screen', {
+      const boot = gsap.timeline()
+
+      boot
+        .from('.boot-code', { opacity: 0, duration: 0.25 })
+        .from('.boot-row', { opacity: 0, x: -10, stagger: 0.09, duration: 0.28 })
+        .from('.boot-progress span', { scaleX: 0, duration: 0.72, ease: 'power2.inOut' })
+        .to('.boot-screen', {
           opacity: 0,
-          duration: 0.65,
+          duration: 0.45,
           delay: 0.18,
           pointerEvents: 'none',
-          onComplete: () => gsap.set('.intro-screen', { display: 'none' }),
+          onComplete: () => gsap.set('.boot-screen', { display: 'none' }),
         })
         .from(
-          ['.hero-kicker', '.hero-title .line', '.hero-copy', '.hero-actions', '.hero-meta', '.hero-signature'],
+          ['.hero-eyebrow', '.hero-title-row', '.hero-lead', '.hero-controls', '.hero-data-strip'],
           {
+            y: 30,
             opacity: 0,
-            y: 34,
-            stagger: 0.065,
-            duration: 0.9,
+            stagger: 0.055,
+            duration: 0.75,
             ease: 'power3.out',
           },
-          '-=0.2',
+          '-=0.08',
         )
 
-      gsap.to('.hero-copy-layer', {
+      gsap.to('.hero-copy-block', {
         yPercent: -14,
-        opacity: 0.1,
+        opacity: 0.12,
         ease: 'none',
         scrollTrigger: {
           trigger: '.hero',
@@ -112,39 +142,39 @@ export default function App() {
         },
       })
 
-      gsap.to('.system-legend', {
-        yPercent: -24,
+      gsap.to('.telemetry-panel', {
+        yPercent: 18,
         opacity: 0,
         ease: 'none',
         scrollTrigger: {
           trigger: '.hero',
           start: 'top top',
-          end: 'bottom 20%',
+          end: 'bottom 18%',
           scrub: 1,
         },
       })
 
-      gsap.from('.origin-line', {
-        yPercent: 108,
+      gsap.from('.field-line', {
+        yPercent: 110,
         opacity: 0,
         stagger: 0.08,
         ease: 'power3.out',
         scrollTrigger: {
-          trigger: '.origin',
-          start: 'top 76%',
+          trigger: '.field-origin',
+          start: 'top 78%',
           end: 'center 48%',
-          scrub: 0.8,
+          scrub: 0.85,
         },
       })
 
-      gsap.from('.principle-card', {
-        y: 42,
+      gsap.from('.method-row', {
+        x: -50,
         opacity: 0,
-        stagger: 0.12,
-        duration: 0.8,
+        stagger: 0.1,
+        duration: 0.75,
         ease: 'power3.out',
         scrollTrigger: {
-          trigger: '.principles',
+          trigger: '.method',
           start: 'top 72%',
         },
       })
@@ -159,25 +189,41 @@ export default function App() {
         Skip to content
       </a>
 
-      <PointerGlow />
+      <PointerCrosshair />
 
-      <div className="intro-screen" aria-hidden="true">
-        <div className="intro-mark">齐天</div>
-        <p className="intro-kicker">SAMUEL QUISPE / QITIAN SYSTEMS LAB</p>
-        <div className="intro-line"><span /></div>
-        <p className="intro-status">FROM REAL PROBLEMS TO DIGITAL SYSTEMS</p>
+      <div className="boot-screen" aria-hidden="true">
+        <div className="boot-code">SQ_SYS / BUILD 0.3</div>
+        <div className="boot-terminal">
+          <div className="boot-row"><span>01</span> LOAD FIELD CONTEXT</div>
+          <div className="boot-row"><span>02</span> MAP PROCESS STATES</div>
+          <div className="boot-row"><span>03</span> VERIFY SYSTEM BOUNDARIES</div>
+          <div className="boot-row"><span>04</span> READY</div>
+        </div>
+        <div className="boot-progress"><span /></div>
       </div>
 
       <header className="site-header">
         <a className="brand" href="#top" aria-label="Samuel home">
-          SQ <span>/</span> QITIAN
+          SAMUEL QUISPE <b>//</b> SYS.ENG
         </a>
-        <div className="header-status">
-          <span className="status-dot" />
-          BUILDING · LEARNING · ITERATING
+
+        <div className="header-center">
+          <span className="live-indicator" />
+          SYSTEM ONLINE
         </div>
-        <a className="header-link" href="#contact">CONTACT</a>
+
+        <a className="header-link" href="#contact">
+          CONTACT [04]
+        </a>
       </header>
+
+      <aside className="side-rail" aria-hidden="true">
+        <span>00</span>
+        <i />
+        <span>SQ</span>
+        <i />
+        <span>26</span>
+      </aside>
 
       <main id="main">
         <section className="hero" id="top">
@@ -185,146 +231,161 @@ export default function App() {
             <SystemScene reducedMotion={reducedMotion} />
           </div>
 
-          <div className="hero-grid" aria-hidden="true" />
-          <div className="hero-axis" aria-hidden="true" />
+          <div className="blueprint-grid" aria-hidden="true" />
+          <div className="measurement measurement-x" aria-hidden="true">X / 1280</div>
+          <div className="measurement measurement-y" aria-hidden="true">Y / 0720</div>
 
-          <div className="hero-copy-layer">
-            <p className="hero-kicker">
-              SOFTWARE ENGINEERING / ARCHITECTURE / PRODUCT · PUNO, PERÚ
+          <div className="hero-copy-block">
+            <p className="hero-eyebrow">
+              SOFTWARE ENGINEERING / PRODUCT SYSTEMS / PUNO, PERÚ
             </p>
 
-            <h1 className="hero-title">
-              <span className="line">UNDERSTAND.</span>
-              <span className="line outline">DESIGN.</span>
-              <span className="line">BUILD.</span>
+            <h1 className="hero-title" aria-label="Engineer the system">
+              <span className="hero-title-row solid">ENGINEER</span>
+              <span className="hero-title-row stencil">THE</span>
+              <span className="hero-title-row solid">SYSTEM.</span>
             </h1>
 
-            <p className="hero-copy">
-              I turn real operational problems into software systems by understanding
-              the process first, designing the structure, and only then writing code.
+            <p className="hero-lead">
+              I study how work actually happens, translate it into rules and structure,
+              then build software that can survive contact with reality.
             </p>
 
-            <div className="hero-actions">
-              <a className="primary-action" href="#origin">
-                <span>ENTER THE SYSTEM</span>
-                <span aria-hidden="true">↘</span>
+            <div className="hero-controls">
+              <a className="industrial-button" href="#field">
+                OPEN SYSTEM MAP
+                <span>↘</span>
               </a>
-              <span className="micro-note">STILL LEARNING · ALREADY BUILDING</span>
+
+              <span className="hero-note">FIELD → LOGIC → SOFTWARE</span>
             </div>
 
-            <div className="hero-signature" aria-hidden="true">
-              <span className="signature-seal">齐天</span>
-              <span>QITIAN / 001</span>
-            </div>
-
-            <div className="hero-meta">
-              <span>01 / PERSONAL SYSTEM</span>
-              <span>SCROLL TO DECOMPOSE</span>
+            <div className="hero-data-strip">
+              <span>PROCESS</span>
+              <span>DATA</span>
+              <span>RULES</span>
+              <span>SECURITY</span>
+              <span>FAILURE</span>
+              <span>USERS</span>
             </div>
           </div>
 
-          <div className="system-legend" aria-hidden="true">
-            <span>01 · PROBLEM</span>
-            <span>02 · PROCESS</span>
-            <span>03 · DATA</span>
-            <span>04 · ARCHITECTURE</span>
-            <span>05 · PRODUCT</span>
+          <div className="telemetry-panel" aria-hidden="true">
+            <div className="telemetry-head">
+              <span>ASSEMBLY / 001</span>
+              <strong>LIVE</strong>
+            </div>
+            <div className="telemetry-row"><span>INPUT</span><b>REAL WORK</b></div>
+            <div className="telemetry-row"><span>MODE</span><b>DECOMPOSE</b></div>
+            <div className="telemetry-row"><span>STATE</span><b>BUILDING</b></div>
+            <div className="telemetry-row"><span>LOC</span><b>PUNO_PE</b></div>
+            <div className="telemetry-rule" />
+            <p>MOVE POINTER / SCROLL TO EXPLODE ASSEMBLY</p>
+          </div>
+
+          <div className="hero-footer-code">
+            <span>SECTION 01 / SYSTEM CORE</span>
+            <span>SCROLL ↓</span>
           </div>
         </section>
 
-        <section className="origin" id="origin">
-          <div className="section-index">02 / ORIGIN</div>
-
-          <div className="origin-copy" aria-label="Real problems first. Software second.">
-            <div className="origin-mask"><span className="origin-line">REAL PROBLEMS</span></div>
-            <div className="origin-mask"><span className="origin-line jade">FIRST.</span></div>
-            <div className="origin-mask"><span className="origin-line">SOFTWARE SECOND.</span></div>
+        <section className="field-origin" id="field">
+          <div className="section-marker">
+            <span>02</span>
+            <b>FIELD INPUT</b>
           </div>
 
-          <div className="origin-foot">
+          <div className="field-statement">
+            <div className="field-mask"><span className="field-line">BEFORE CODE,</span></div>
+            <div className="field-mask"><span className="field-line orange">READ THE FIELD.</span></div>
+          </div>
+
+          <div className="field-layout">
             <p>
-              My path into software did not begin in a design studio. It came through
-              field work, mining, study, and building tools for real businesses.
-              That taught me to look at the system before reaching for the code.
+              My route into software includes field work and mining before product
+              development. That matters because real operations are noisy: people improvise,
+              information gets repeated, time gets lost and edge cases are everywhere.
             </p>
-            <div className="origin-coordinates">
-              <span>PUNO / PERÚ</span>
-              <span>ENGINEERING IN PROGRESS</span>
-              <span>PRODUCT MINDSET</span>
+
+            <div className="field-spec">
+              <div><span>INPUT</span><b>OPERATIONS</b></div>
+              <div><span>METHOD</span><b>OBSERVE + MODEL</b></div>
+              <div><span>OUTPUT</span><b>SOFTWARE SYSTEM</b></div>
+              <div><span>STATUS</span><b>LEARNING / BUILDING</b></div>
             </div>
           </div>
         </section>
 
-        <section className="principles">
-          <div className="section-index">03 / HOW I THINK</div>
+        <section className="method">
+          <div className="section-marker">
+            <span>03</span>
+            <b>OPERATING METHOD</b>
+          </div>
 
-          <div className="principles-grid">
-            <article className="principle-card">
-              <span className="principle-number">01</span>
-              <h2>Understand the process.</h2>
-              <p>
-                Before choosing a framework, I want to know the workflow, the people,
-                the constraints, the data and what can actually go wrong.
-              </p>
-            </article>
-
-            <article className="principle-card">
-              <span className="principle-number">02</span>
-              <h2>Design the system.</h2>
-              <p>
-                Responsibilities, boundaries, business rules, security and trade-offs
-                should be visible before the codebase becomes a maze.
-              </p>
-            </article>
-
-            <article className="principle-card accent-card">
-              <span className="principle-number">03</span>
-              <h2>Build what matters.</h2>
-              <p>
-                Useful software is not the one with the most features. It is the one
-                that removes friction and survives contact with real users.
-              </p>
-            </article>
+          <div className="method-table">
+            {method.map((item) => (
+              <article className="method-row" key={item.index}>
+                <span className="method-index">{item.index}</span>
+                <span className="method-code">{item.code}</span>
+                <h2>{item.title}</h2>
+                <p>{item.copy}</p>
+                <span className="method-arrow">↗</span>
+              </article>
+            ))}
           </div>
         </section>
 
-        <section className="project-teaser" id="work">
-          <div className="section-index">04 / CURRENT SYSTEM</div>
-
-          <div className="project-heading">
-            <p>CASE STUDY / 001 · IN DEVELOPMENT</p>
-            <h2>BRACKET</h2>
-            <p className="project-subtitle">
-              Dental operations software shaped from real workflows in Puno, Perú.
-            </p>
+        <section className="project" id="work">
+          <div className="section-marker">
+            <span>04</span>
+            <b>FIELD PROJECT / ACTIVE</b>
           </div>
 
-          <div className="project-data">
-            <span>REAL WORKFLOWS</span>
-            <span>BUSINESS RULES</span>
-            <span>SECURITY + AUDIT</span>
-            <span>PRODUCT IN PROGRESS</span>
+          <div className="project-topline">
+            <span>CASE_001</span>
+            <span>PUNO_PE</span>
+            <span>STATUS / IN DEVELOPMENT</span>
           </div>
 
-          <div className="project-philosophy">
-            <span>PROBLEM</span>
-            <i>→</i>
-            <span>PROCESS</span>
-            <i>→</i>
-            <span>SYSTEM</span>
-            <i>→</i>
-            <span>PRODUCT</span>
+          <h2>BRACKET</h2>
+
+          <div className="project-grid">
+            <div className="project-description">
+              <p>
+                Dental operations software built from observed workflows instead of
+                assumptions: appointments, clinical work, payments, permissions,
+                auditability and the friction between them.
+              </p>
+
+              <a href="#contact" className="text-link">CASE STUDY IN CONSTRUCTION ↗</a>
+            </div>
+
+            <div className="project-specs">
+              <div><span>TYPE</span><b>BUSINESS SOFTWARE</b></div>
+              <div><span>USERS</span><b>REAL CLINIC TEAM</b></div>
+              <div><span>FOCUS</span><b>WORKFLOW + SECURITY</b></div>
+              <div><span>APPROACH</span><b>ITERATIVE MVP</b></div>
+            </div>
+          </div>
+
+          <div className="process-ribbon" aria-hidden="true">
+            <span>PROBLEM</span><i>01</i>
+            <span>PROCESS</span><i>02</i>
+            <span>RULES</span><i>03</i>
+            <span>SYSTEM</span><i>04</i>
+            <span>PRODUCT</span><i>05</i>
           </div>
         </section>
 
         <footer id="contact">
-          <div>
-            <span className="footer-mark">齐天 / QITIAN</span>
-            <p>BUILD WITH PURPOSE.</p>
+          <div className="footer-code">END / SQ_SYS_2026</div>
+
+          <div className="footer-main">
+            <p>BUILD FOR REALITY.</p>
+            <a href="https://github.com/SamuelShiw" target="_blank" rel="noreferrer">
+              GITHUB ↗
+            </a>
           </div>
-          <a href="https://github.com/SamuelShiw" target="_blank" rel="noreferrer">
-            GITHUB ↗
-          </a>
         </footer>
       </main>
     </div>
