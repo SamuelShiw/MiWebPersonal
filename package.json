@@ -1,0 +1,30 @@
+{
+  "name": "samuel-digital-systems-lab",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@react-three/fiber": "^9.7.0",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.26",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "@types/three": "^0.186.0"
+  }
+}
