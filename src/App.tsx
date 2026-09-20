@@ -9,57 +9,66 @@ const whatsappNumber = '51901036216'
 const whatsappMessage =
   'Hola J. Samuel, vi tu portafolio y me gustaría conversar contigo sobre un proyecto.'
 
-const systems = [
+const pageIndex = [
+  ['001', 'Concept', 'Quién soy y cómo pienso'],
+  ['002', 'Process & Systems', 'Cómo convierto problemas en software'],
+  ['003', 'Scene', 'Dónde aplico lo que aprendo'],
+]
+
+const processSteps = [
   {
     id: '01',
-    name: 'BRACKET',
-    type: 'Business software',
-    line1: 'Real clinic workflows.',
-    line2: 'Security, audit and product thinking.',
-    status: 'IN DEVELOPMENT',
+    title: 'Primero observo el trabajo real.',
+    copy:
+      'Antes de decidir tecnologías, entiendo a las personas, los tiempos, los documentos, los errores frecuentes y los puntos donde la información se rompe.',
+    tag: 'FIELD / AS-IS',
   },
   {
     id: '02',
-    name: 'ACCOUNTING',
-    type: 'Domain system',
-    line1: 'Accounting logic and modules.',
-    line2: 'Backend rules before interface decoration.',
-    status: 'PROTOTYPE',
+    title: 'Después convierto la realidad en reglas.',
+    copy:
+      'Flujos, estados, permisos, datos, restricciones y excepciones dejan de ser conversaciones sueltas y pasan a convertirse en un modelo que se puede construir.',
+    tag: 'MODEL / RULES',
   },
   {
     id: '03',
-    name: 'SIGET-ML',
-    type: 'ML workflow',
-    line1: 'Process prioritization.',
-    line2: 'Prediction inside a useful business flow.',
-    status: 'EXPERIMENT',
+    title: 'Finalmente construyo el sistema.',
+    copy:
+      'Arquitectura, seguridad, interfaz y producto se conectan para entregar software útil, verificable y capaz de evolucionar sin perder estructura.',
+    tag: 'BUILD / PRODUCT',
   },
 ]
 
-const scenes = [
-  ['01', 'ARCHITECTURE', 'Boundaries, responsibilities and trade-offs.'],
-  ['02', 'PRODUCT', 'Solve the operation before adding features.'],
-  ['03', 'SECURITY', 'Permissions, auditability and data integrity.'],
-  ['04', 'AI', 'Use intelligence where it changes the workflow.'],
-  ['05', 'DATA', 'Model information so decisions become visible.'],
-  ['06', 'BUILD', 'Small, verifiable and maintainable increments.'],
+const buildScenes = [
+  ['Business Software', 'BRACKET', 'Flujos clínicos, agenda, caja, permisos y auditoría.'],
+  ['Architecture', 'System Design', 'Límites, responsabilidades, contratos y decisiones técnicas.'],
+  ['Security', 'Access & Audit', 'Autorización, integridad, trazabilidad y reglas de acceso.'],
+  ['Product', 'Real Users', 'Priorizar lo que reduce fricción antes que acumular funciones.'],
+]
+
+const exploreScenes = [
+  ['Artificial Intelligence', 'Applied AI', 'IA integrada al flujo cuando realmente mejora una decisión.'],
+  ['Data', 'Analytics', 'Modelado, transformación y lectura de información para decidir mejor.'],
+  ['Computer Vision', 'Vision Systems', 'Detección, monitoreo y experimentos con visión artificial.'],
+  ['Creative Tech', 'QITIAN Lab', 'Interfaces, 3D, motion y experimentos que amplían mi lenguaje digital.'],
 ]
 
 export default function App() {
   const root = useRef<HTMLDivElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [activeSystem, setActiveSystem] = useState(0)
+  const [activeProcess, setActiveProcess] = useState(0)
 
-  const whatsappUrl = useMemo(() => {
-    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`
-  }, [])
+  const whatsappUrl = useMemo(
+    () => `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`,
+    [],
+  )
 
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduceMotion) return
 
     const lenis = new Lenis({
-      lerp: 0.08,
+      lerp: 0.075,
       smoothWheel: true,
       wheelMultiplier: 0.9,
     })
@@ -82,157 +91,151 @@ export default function App() {
 
   useLayoutEffect(() => {
     if (!root.current) return
+
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduceMotion) return
 
-    const ctx = gsap.context(() => {
+    const context = gsap.context(() => {
       const intro = gsap.timeline()
 
       intro
-        .from('.entry-letter', {
-          yPercent: 120,
-          opacity: 0,
-          stagger: 0.055,
-          duration: 0.85,
+        .from('.page-title-char', {
+          yPercent: 115,
+          stagger: 0.035,
+          duration: 0.9,
           ease: 'power4.out',
         })
-        .from('.hero-small, .hero-index, .hero-scroll', {
+        .from('.hero-index-row', {
           opacity: 0,
-          y: 14,
+          y: 18,
           stagger: 0.08,
-          duration: 0.5,
-          ease: 'power2.out',
-        }, '-=0.42')
-        .from('.hero-orbit', {
-          scale: 0.72,
-          opacity: 0,
-          rotate: -22,
-          duration: 1.2,
+          duration: 0.6,
           ease: 'power3.out',
-        }, '-=0.75')
+        }, '-=0.5')
+        .from('.hero-index-row::after', { scaleX: 0 })
 
-      gsap.to('.hero-orbit', {
-        rotate: 55,
-        yPercent: 16,
+      gsap.to('.page-title', {
+        yPercent: -8,
+        opacity: 0.18,
         ease: 'none',
         scrollTrigger: {
-          trigger: '.hero',
+          trigger: '.page-hero',
           start: 'top top',
           end: 'bottom top',
           scrub: 1,
         },
       })
 
-      gsap.to('.hero-title', {
-        yPercent: -15,
-        opacity: 0.15,
+      gsap.from('.concept-heading-line', {
+        yPercent: 110,
+        opacity: 0,
+        stagger: 0.08,
+        duration: 0.85,
+        ease: 'power4.out',
+        scrollTrigger: {
+          trigger: '.concept-statement',
+          start: 'top 82%',
+        },
+      })
+
+      gsap.from('.concept-body p', {
+        opacity: 0,
+        y: 24,
+        stagger: 0.12,
+        duration: 0.75,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.concept-body',
+          start: 'top 78%',
+        },
+      })
+
+      gsap.to('.concept-visual-ring-a', {
+        rotate: 95,
+        scale: 1.12,
         ease: 'none',
         scrollTrigger: {
-          trigger: '.hero',
-          start: 'top top',
+          trigger: '.concept-visual',
+          start: 'top bottom',
           end: 'bottom top',
           scrub: 1,
         },
       })
 
-      gsap.utils.toArray<HTMLElement>('.reveal-line').forEach((line) => {
-        gsap.from(line, {
-          yPercent: 110,
+      gsap.to('.concept-visual-ring-b', {
+        rotate: -80,
+        scale: 0.92,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.concept-visual',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1,
+        },
+      })
+
+      gsap.utils.toArray<HTMLElement>('.process-step').forEach((step, index) => {
+        ScrollTrigger.create({
+          trigger: step,
+          start: 'top 50%',
+          end: 'bottom 50%',
+          onEnter: () => setActiveProcess(index),
+          onEnterBack: () => setActiveProcess(index),
+        })
+
+        gsap.from(step.querySelectorAll('.process-reveal'), {
           opacity: 0,
-          duration: 0.95,
-          ease: 'power4.out',
+          y: 28,
+          stagger: 0.08,
+          duration: 0.75,
+          ease: 'power3.out',
           scrollTrigger: {
-            trigger: line,
-            start: 'top 86%',
+            trigger: step,
+            start: 'top 76%',
           },
         })
       })
 
-      gsap.from('.concept-copy p', {
-        y: 24,
-        opacity: 0,
-        stagger: 0.11,
-        duration: 0.7,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.concept-copy',
-          start: 'top 74%',
-        },
-      })
-
-      const philosophyTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: '.philosophy',
-          start: 'top top',
-          end: '+=210%',
-          pin: '.philosophy-pin',
-          scrub: 1,
-          anticipatePin: 1,
-        },
-      })
-
-      philosophyTl
-        .fromTo('.philosophy-ring-a',
-          { scale: 0.55, rotate: -50, opacity: 0.2 },
-          { scale: 1, rotate: 40, opacity: 1, duration: 0.35 }
-        )
-        .fromTo('.philosophy-ring-b',
-          { scale: 0.42, rotate: 45, opacity: 0.18 },
-          { scale: 1, rotate: -38, opacity: 1, duration: 0.35 },
-          0.05
-        )
-        .fromTo('.philosophy-core',
-          { scale: 0.4, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.24 },
-          0.18
-        )
-        .to('.philosophy-copy-a', { opacity: 0, y: -36, duration: 0.22 }, 0.42)
-        .fromTo('.philosophy-copy-b',
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 0.24 },
-          0.46
-        )
-        .to('.philosophy-ring-a', { xPercent: -22, scale: 1.25, duration: 0.3 }, 0.7)
-        .to('.philosophy-ring-b', { xPercent: 28, scale: 1.18, duration: 0.3 }, 0.7)
-
-      gsap.utils.toArray<HTMLElement>('.system-panel').forEach((panel, index) => {
-        ScrollTrigger.create({
-          trigger: panel,
-          start: 'top 52%',
-          end: 'bottom 52%',
-          onEnter: () => setActiveSystem(index),
-          onEnterBack: () => setActiveSystem(index),
-        })
-      })
-
       gsap.from('.scene-card', {
-        y: 60,
         opacity: 0,
-        stagger: 0.08,
+        y: 44,
+        stagger: 0.06,
         duration: 0.7,
         ease: 'power3.out',
         scrollTrigger: {
-          trigger: '.scene-grid',
-          start: 'top 78%',
+          trigger: '.scene-gallery',
+          start: 'top 76%',
         },
+      })
+
+      gsap.utils.toArray<HTMLElement>('.section-title').forEach((title) => {
+        gsap.from(title, {
+          opacity: 0,
+          x: -24,
+          duration: 0.7,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: title,
+            start: 'top 84%',
+          },
+        })
       })
     }, root)
 
-    return () => ctx.revert()
+    return () => context.revert()
   }, [])
 
-  const selectedSystem = systems[activeSystem]
+  const active = processSteps[activeProcess]
 
   return (
-    <div ref={root} className="zeroz-shell">
-      <header className="site-nav">
-        <a href="#top" className="site-logo">J. SAMUEL</a>
-        <div className="site-nav-mid">SOFTWARE ENGINEERING / PUNO, PERÚ</div>
+    <div ref={root} className="site-shell">
+      <header className="top-nav">
+        <a className="brand" href="#top">J. SAMUEL</a>
+        <div className="brand-note">SOFTWARE / SYSTEMS / PRODUCT</div>
         <button
+          className="menu-trigger"
           type="button"
-          className="menu-button"
           aria-expanded={menuOpen}
-          aria-label="Open navigation"
           onClick={() => setMenuOpen((value) => !value)}
         >
           <span>Menu</span>
@@ -241,251 +244,295 @@ export default function App() {
         </button>
       </header>
 
-      <div className={`menu-overlay ${menuOpen ? 'is-open' : ''}`}>
-        <button className="menu-close" type="button" onClick={() => setMenuOpen(false)}>Close</button>
-        <nav>
-          <a href="#about" onClick={() => setMenuOpen(false)}>About <span>001</span></a>
-          <a href="#philosophy" onClick={() => setMenuOpen(false)}>Philosophy <span>002</span></a>
-          <a href="#work" onClick={() => setMenuOpen(false)}>Work <span>003</span></a>
-          <a href="#scene" onClick={() => setMenuOpen(false)}>Practice <span>004</span></a>
-          <a href="#contact" onClick={() => setMenuOpen(false)}>Contact <span>005</span></a>
-        </nav>
-        <div className="menu-foot">QITIAN / 齐天 · 2026</div>
-      </div>
-
-      <aside className="page-counter" aria-hidden="true">
+      <aside className="side-count" aria-hidden="true">
         <span>01</span>
         <i />
         <span>11</span>
       </aside>
 
+      <div className={`menu-overlay ${menuOpen ? 'open' : ''}`}>
+        <button className="menu-close" type="button" onClick={() => setMenuOpen(false)}>
+          Close
+        </button>
+
+        <nav>
+          <a href="#concept" onClick={() => setMenuOpen(false)}>
+            <span>About</span><small>001</small>
+          </a>
+          <a href="#systems" onClick={() => setMenuOpen(false)}>
+            <span>Process & Systems</span><small>002</small>
+          </a>
+          <a href="#scene" onClick={() => setMenuOpen(false)}>
+            <span>Scene</span><small>003</small>
+          </a>
+          <a href="#contact" onClick={() => setMenuOpen(false)}>
+            <span>Contact</span><small>004</small>
+          </a>
+        </nav>
+
+        <div className="menu-meta">
+          <span>PUNO, PERÚ</span>
+          <span>QITIAN / 齐天</span>
+        </div>
+      </div>
+
       <main>
-        <section className="hero" id="top">
-          <div className="hero-small">/ Personal Portfolio</div>
-
-          <h1 className="hero-title" aria-label="J. Samuel">
-            {'J.SAMUEL'.split('').map((letter, index) => (
-              <span className="entry-mask" key={index}>
-                <span className="entry-letter">{letter === ' ' ? '\u00A0' : letter}</span>
-              </span>
+        <section className="page-hero" id="top">
+          <div className="hero-index-list">
+            {pageIndex.map(([number, title, description]) => (
+              <a className="hero-index-row" href={number === '001' ? '#concept' : number === '002' ? '#systems' : '#scene'} key={number}>
+                <span>{number}</span>
+                <strong>{title}</strong>
+                <em>{description}</em>
+              </a>
             ))}
-          </h1>
-
-          <div className="hero-orbit" aria-hidden="true">
-            <div className="orbit orbit-a" />
-            <div className="orbit orbit-b" />
-            <div className="orbit orbit-c" />
-            <div className="orbit-core">JS</div>
           </div>
 
-          <div className="hero-index">
-            <span>Software</span>
-            <span>Systems</span>
-            <span>Product</span>
+          <div className="page-title-wrap">
+            <span className="page-slash">/</span>
+            <h1 className="page-title" aria-label="About">
+              {'About'.split('').map((char, index) => (
+                <span className="page-title-mask" key={index}>
+                  <span className="page-title-char">{char}</span>
+                </span>
+              ))}
+            </h1>
           </div>
 
-          <div className="hero-scroll">SCROLL / 001 ↓</div>
-        </section>
-
-        <section className="about-section" id="about">
-          <div className="chapter-head">
-            <span className="chapter-number">001</span>
-            <div>
-              <span className="chapter-slash">/</span>
-              <h2>A b o u t</h2>
-            </div>
+          <div className="hero-mark" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <b>JS</b>
           </div>
 
-          <div className="about-stage">
-            <div className="about-sculpture" aria-hidden="true">
-              <span className="sculpture-dot dot-1" />
-              <span className="sculpture-dot dot-2" />
-              <span className="sculpture-dot dot-3" />
-              <span className="sculpture-line line-a" />
-              <span className="sculpture-line line-b" />
-              <span className="sculpture-line line-c" />
-              <strong>REALITY</strong>
-            </div>
-
-            <div className="about-copy">
-              <span className="sub-index">001 / Concept</span>
-              <div className="large-statement">
-                <div className="line-mask"><span className="reveal-line">Understand</span></div>
-                <div className="line-mask"><span className="reveal-line">the system</span></div>
-                <div className="line-mask"><span className="reveal-line accent">before the code.</span></div>
-              </div>
-
-              <div className="concept-copy">
-                <p>
-                  I am J. Samuel, a software engineering student from Puno building my path
-                  around architecture, product development and real business problems.
-                </p>
-                <p>
-                  My work starts by observing how people actually operate: where time is lost,
-                  where information is repeated and which rules hold the process together.
-                </p>
-                <p>
-                  Then I translate that reality into software that can be maintained, audited
-                  and improved instead of becoming another fragile tool.
-                </p>
-              </div>
-            </div>
+          <div className="hero-bottom">
+            <span>J. SAMUEL / 2026</span>
+            <span>SCROLL ↓</span>
           </div>
         </section>
 
-        <section className="philosophy" id="philosophy">
-          <div className="philosophy-pin">
-            <div className="chapter-head chapter-head-dark">
-              <span className="chapter-number">002</span>
+        <section className="section concept-section" id="concept">
+          <header className="section-title">
+            <span className="section-number">001</span>
+            <div className="section-name">
+              <span>/</span>
               <div>
-                <span className="chapter-slash">/</span>
-                <h2>S y s t e m &<br />P r o c e s s</h2>
+                <h2>C o n c e p t</h2>
+                <small>(Identidad y enfoque)</small>
               </div>
             </div>
+          </header>
 
-            <div className="philosophy-visual" aria-hidden="true">
-              <div className="philosophy-ring philosophy-ring-a" />
-              <div className="philosophy-ring philosophy-ring-b" />
-              <div className="philosophy-core">01</div>
+          <div className="concept-layout">
+            <div className="concept-statement">
+              <div className="text-mask"><span className="concept-heading-line">Entender</span></div>
+              <div className="text-mask"><span className="concept-heading-line">antes de</span></div>
+              <div className="text-mask"><span className="concept-heading-line accent">construir.</span></div>
             </div>
 
-            <div className="philosophy-copy philosophy-copy-a">
-              <span>01 / INPUT</span>
-              <h3>Real operations are noisy.</h3>
-              <p>People, paper, data, exceptions, time and business rules collide every day.</p>
+            <div className="concept-body">
+              <p>
+                Soy J. Samuel. Estudio Ingeniería de Software con IA y estoy construyendo
+                mi camino alrededor de software de negocio, arquitectura, seguridad,
+                producto y datos.
+              </p>
+              <p>
+                No quiero empezar una solución preguntando qué framework usar. Primero
+                quiero entender cómo funciona el trabajo real: quién hace qué, dónde se
+                pierde tiempo, qué información se duplica y qué reglas no pueden romperse.
+              </p>
+              <p>
+                Esa forma de pensar es la base de lo que estoy construyendo hoy y también
+                de la consultora de software que quiero desarrollar en el futuro.
+              </p>
             </div>
+          </div>
 
-            <div className="philosophy-copy philosophy-copy-b">
-              <span>02 / OUTPUT</span>
-              <h3>Good software gives that reality structure.</h3>
-              <p>Process → rules → data → architecture → product.</p>
+          <div className="concept-visual" aria-hidden="true">
+            <div className="concept-visual-meta">
+              <span>REALITY / PROCESS / SOFTWARE</span>
+              <span>001</span>
             </div>
-
-            <div className="philosophy-footer">
-              <span>UNDERSTAND</span>
-              <span>MODEL</span>
-              <span>DESIGN</span>
-              <span>BUILD</span>
+            <div className="concept-visual-ring concept-visual-ring-a" />
+            <div className="concept-visual-ring concept-visual-ring-b" />
+            <div className="concept-visual-ring concept-visual-ring-c" />
+            <div className="concept-visual-core">SYSTEM</div>
+            <div className="concept-visual-foot">
+              <span>FIELD INPUT</span>
+              <span>STRUCTURED OUTPUT</span>
             </div>
           </div>
         </section>
 
-        <section className="work-section" id="work">
-          <div className="chapter-head">
-            <span className="chapter-number">003</span>
+        <section className="section systems-section" id="systems">
+          <header className="section-title">
+            <span className="section-number">002</span>
+            <div className="section-name">
+              <span>/</span>
+              <div>
+                <h2>P r o c e s s &<br />S y s t e m s</h2>
+                <small>(Cómo convierto problemas en software)</small>
+              </div>
+            </div>
+          </header>
+
+          <div className="systems-intro">
+            <h3>
+              El software útil empieza<br />
+              mucho antes del código.
+            </h3>
             <div>
-              <span className="chapter-slash">/</span>
-              <h2>W o r k</h2>
+              <p>
+                Un proceso real tiene personas, documentos, tiempos, decisiones, excepciones
+                y consecuencias. Mi objetivo es hacer visible esa complejidad antes de
+                convertirla en pantallas.
+              </p>
+              <p>
+                Por eso trabajo en tres movimientos: observar, modelar y construir.
+              </p>
             </div>
           </div>
 
-          <div className="work-intro">
-            <div>
-              <span className="sub-index">Selected systems</span>
-              <h3>Built to learn.<br />Built around reality.</h3>
-            </div>
-            <p>
-              Projects are not shown as technology checklists. Each one is a different
-              attempt to understand a domain and turn it into a useful system.
-            </p>
-          </div>
+          <div className="process-layout">
+            <aside className="process-visual-wrap">
+              <div className="process-visual">
+                <div className="process-tabs">
+                  {processSteps.map((step, index) => (
+                    <span className={activeProcess === index ? 'active' : ''} key={step.id}>
+                      {step.id}
+                    </span>
+                  ))}
+                </div>
 
-          <div className="work-layout">
-            <aside className="work-sticky">
-              <div className="work-preview">
-                <span className="preview-id">{selectedSystem.id} /03</span>
-                <div className="preview-graphic" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
-                  <b>{selectedSystem.id}</b>
+                <div className={`process-art process-art-${activeProcess + 1}`} aria-hidden="true">
+                  <div className="process-orbit orbit-one" />
+                  <div className="process-orbit orbit-two" />
+                  <div className="process-orbit orbit-three" />
+                  <div className="process-core">{active.id}</div>
+                  <span className="process-node node-one" />
+                  <span className="process-node node-two" />
+                  <span className="process-node node-three" />
                 </div>
-                <div>
-                  <span>{selectedSystem.type}</span>
-                  <strong>{selectedSystem.name}</strong>
+
+                <div className="process-visual-caption">
+                  <span>{active.tag}</span>
+                  <span>{active.id} /03</span>
                 </div>
-                <em>{selectedSystem.status}</em>
               </div>
             </aside>
 
-            <div className="system-list">
-              {systems.map((system) => (
-                <article className="system-panel" key={system.id}>
-                  <span className="system-number">{system.id}</span>
-                  <span className="system-type">{system.type}</span>
-                  <h4>{system.name}</h4>
-                  <p>{system.line1}<br />{system.line2}</p>
-                  <span className="system-status">{system.status}</span>
+            <div className="process-steps">
+              {processSteps.map((step) => (
+                <article className="process-step" key={step.id}>
+                  <span className="process-count process-reveal">{step.id} /03</span>
+                  <h4 className="process-reveal">{step.title}</h4>
+                  <p className="process-reveal">{step.copy}</p>
+                  <span className="process-tag process-reveal">{step.tag}</span>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="scene-section" id="scene">
-          <div className="chapter-head">
-            <span className="chapter-number">004</span>
-            <div>
-              <span className="chapter-slash">/</span>
-              <h2>P r a c t i c e</h2>
+        <section className="section scene-section" id="scene">
+          <header className="section-title">
+            <span className="section-number">003</span>
+            <div className="section-name">
+              <span>/</span>
+              <div>
+                <h2>S c e n e</h2>
+                <small>(Dónde aplico lo que aprendo)</small>
+              </div>
             </div>
-          </div>
+          </header>
 
           <div className="scene-intro">
             <h3>
-              The areas I am learning to connect<br />
-              into one engineering practice.
+              Construir, aprender<br />
+              y volver a conectar.
             </h3>
+            <p>
+              Mi práctica no vive en una sola tecnología. Hay una parte enfocada en sistemas
+              reales para organizaciones y otra dedicada a experimentar con nuevas herramientas,
+              datos, IA y formas de interacción.
+            </p>
           </div>
 
-          <div className="scene-grid">
-            {scenes.map(([id, title, copy]) => (
-              <article className="scene-card" key={id}>
-                <span>{id}</span>
-                <strong>{title}</strong>
-                <p>{copy}</p>
-                <i>↗</i>
-              </article>
-            ))}
+          <div className="scene-gallery">
+            <div className="scene-group">
+              <div className="scene-group-label">
+                <span>For /</span>
+                <strong>BUILD</strong>
+              </div>
+
+              <div className="scene-grid">
+                {buildScenes.map(([eyebrow, title, copy], index) => (
+                  <article className="scene-card" key={title}>
+                    <div className={`scene-image scene-image-${index + 1}`} aria-hidden="true">
+                      <span />
+                      <span />
+                      <b>{String(index + 1).padStart(2, '0')}</b>
+                    </div>
+                    <span>{eyebrow}</span>
+                    <h4>{title}</h4>
+                    <p>{copy}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="scene-group scene-group-explore">
+              <div className="scene-group-label">
+                <span>For /</span>
+                <strong>EXPLORE</strong>
+              </div>
+
+              <div className="scene-grid">
+                {exploreScenes.map(([eyebrow, title, copy], index) => (
+                  <article className="scene-card" key={title}>
+                    <div className={`scene-image scene-image-${index + 5}`} aria-hidden="true">
+                      <span />
+                      <span />
+                      <b>{String(index + 5).padStart(2, '0')}</b>
+                    </div>
+                    <span>{eyebrow}</span>
+                    <h4>{title}</h4>
+                    <p>{copy}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
         <section className="contact-section" id="contact">
-          <div className="contact-orbit" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </div>
+          <div className="contact-kicker">/ Contact</div>
+          <h2>
+            Hablemos de un problema<br />
+            que valga la pena resolver.
+          </h2>
 
-          <div className="chapter-head chapter-head-dark">
-            <span className="chapter-number">005</span>
-            <div>
-              <span className="chapter-slash">/</span>
-              <h2>C o n t a c t</h2>
-            </div>
-          </div>
-
-          <div className="contact-copy">
-            <span>Have a problem worth solving?</span>
-            <h3>Let&apos;s turn it<br />into a system.</h3>
-          </div>
-
-          <a
-            className="contact-button"
-            href={whatsappUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a className="whatsapp-cta" href={whatsappUrl} target="_blank" rel="noreferrer">
             <span>START ON WHATSAPP</span>
-            <span>+51 901 036 216 ↗</span>
+            <strong>+51 901 036 216 ↗</strong>
           </a>
-
-          <div className="contact-foot">
-            <span>J. SAMUEL / PUNO, PERÚ</span>
-            <a href="https://github.com/SamuelShiw" target="_blank" rel="noreferrer">GITHUB ↗</a>
-            <span>QITIAN / 齐天</span>
-          </div>
         </section>
+
+        <footer className="site-footer">
+          <div className="footer-links">
+            <a href="#concept"><span>About</span><small>Quién soy y cómo pienso</small></a>
+            <a href="#systems"><span>Process & Systems</span><small>Cómo convierto problemas en software</small></a>
+            <a href="#scene"><span>Scene</span><small>Dónde aplico lo que aprendo</small></a>
+            <a href="https://github.com/SamuelShiw" target="_blank" rel="noreferrer"><span>GitHub ↗</span><small>Selected repositories</small></a>
+          </div>
+
+          <div className="footer-bottom">
+            <span>J. SAMUEL / PUNO, PERÚ</span>
+            <span>QITIAN / 齐天</span>
+            <span>© 2026</span>
+          </div>
+        </footer>
       </main>
     </div>
   )
