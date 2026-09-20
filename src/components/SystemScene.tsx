@@ -6,21 +6,31 @@ type SceneProps = {
   reducedMotion: boolean
 }
 
+type ModuleSpec = {
+  position: [number, number, number]
+  scale: [number, number, number]
+  accent?: boolean
+}
+
+const modules: ModuleSpec[] = [
+  { position: [-1.55, 1.08, 0.18], scale: [1.35, 0.42, 0.72] },
+  { position: [0.15, 0.82, -0.35], scale: [1.62, 0.48, 0.86] },
+  { position: [-0.55, 0.02, 0.55], scale: [1.9, 0.5, 0.92], accent: true },
+  { position: [1.1, -0.55, -0.22], scale: [1.52, 0.46, 0.78] },
+  { position: [-0.2, -1.28, 0.1], scale: [1.7, 0.5, 0.88] },
+]
+
 function ParticleField({ reducedMotion }: SceneProps) {
   const points = useRef<THREE.Points>(null)
 
   const positions = useMemo(() => {
-    const count = 420
+    const count = 280
     const data = new Float32Array(count * 3)
 
     for (let i = 0; i < count; i += 1) {
-      const radius = 3 + Math.random() * 5
-      const theta = Math.random() * Math.PI * 2
-      const phi = Math.acos(2 * Math.random() - 1)
-
-      data[i * 3] = radius * Math.sin(phi) * Math.cos(theta)
-      data[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta)
-      data[i * 3 + 2] = radius * Math.cos(phi)
+      data[i * 3] = (Math.random() - 0.5) * 11
+      data[i * 3 + 1] = (Math.random() - 0.5) * 8
+      data[i * 3 + 2] = (Math.random() - 0.5) * 6
     }
 
     return data
@@ -28,23 +38,19 @@ function ParticleField({ reducedMotion }: SceneProps) {
 
   useFrame((_, delta) => {
     if (!points.current || reducedMotion) return
-    points.current.rotation.y += delta * 0.018
-    points.current.rotation.x -= delta * 0.006
+    points.current.rotation.y += delta * 0.008
   })
 
   return (
     <points ref={points}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        color="#9bb4c9"
-        size={0.025}
+        color="#9ab2aa"
+        size={0.018}
         transparent
-        opacity={0.5}
+        opacity={0.38}
         sizeAttenuation
         depthWrite={false}
       />
@@ -52,79 +58,122 @@ function ParticleField({ reducedMotion }: SceneProps) {
   )
 }
 
-function SystemCore({ reducedMotion }: SceneProps) {
+function ConnectionGrid() {
+  const positions = useMemo(() => {
+    const vertices: number[] = []
+
+    const connect = (a: ModuleSpec, b: ModuleSpec) => {
+      vertices.push(...a.position, ...b.position)
+    }
+
+    connect(modules[0], modules[1])
+    connect(modules[0], modules[2])
+    connect(modules[1], modules[2])
+    connect(modules[1], modules[3])
+    connect(modules[2], modules[3])
+    connect(modules[2], modules[4])
+    connect(modules[3], modules[4])
+
+    return new Float32Array(vertices)
+  }, [])
+
+  return (
+    <lineSegments>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <lineBasicMaterial color="#638b7e" transparent opacity={0.34} />
+    </lineSegments>
+  )
+}
+
+function ArchitectureSystem({ reducedMotion }: SceneProps) {
   const group = useRef<THREE.Group>(null)
-  const shell = useRef<THREE.Mesh>(null)
-  const ringA = useRef<THREE.Mesh>(null)
-  const ringB = useRef<THREE.Mesh>(null)
+  const frame = useRef<THREE.Mesh>(null)
+  const accent = useRef<THREE.Mesh>(null)
 
   useFrame((state, delta) => {
-    if (!group.current || !shell.current || !ringA.current || !ringB.current) return
+    if (!group.current || !frame.current || !accent.current) return
 
-    const scroll = Math.min(window.scrollY / Math.max(window.innerHeight, 1), 1.25)
+    const scroll = Math.min(window.scrollY / Math.max(window.innerHeight, 1), 1.3)
     const mouseX = reducedMotion ? 0 : state.pointer.x
     const mouseY = reducedMotion ? 0 : state.pointer.y
 
     group.current.rotation.y = THREE.MathUtils.lerp(
       group.current.rotation.y,
-      mouseX * 0.26 + scroll * 0.72,
+      -0.18 + mouseX * 0.18 + scroll * 0.44,
       0.035,
     )
     group.current.rotation.x = THREE.MathUtils.lerp(
       group.current.rotation.x,
-      -mouseY * 0.18 + scroll * 0.16,
+      -0.08 - mouseY * 0.1 + scroll * 0.12,
       0.035,
     )
-    group.current.position.z = THREE.MathUtils.lerp(group.current.position.z, scroll * 1.3, 0.03)
-    group.current.scale.setScalar(1 + scroll * 0.16)
+    group.current.position.x = THREE.MathUtils.lerp(group.current.position.x, 1.2 + scroll * 0.35, 0.03)
+    group.current.position.z = THREE.MathUtils.lerp(group.current.position.z, scroll * 0.9, 0.03)
+    group.current.scale.setScalar(1 + scroll * 0.11)
+
+    modules.forEach((module, index) => {
+      const child = group.current?.children[index]
+      if (!child) return
+      const spread = scroll * 0.42
+      child.position.z = module.position[2] + spread * (index - 2)
+    })
 
     if (!reducedMotion) {
-      shell.current.rotation.x += delta * 0.08
-      shell.current.rotation.y += delta * 0.11
-      ringA.current.rotation.z += delta * 0.16
-      ringB.current.rotation.x -= delta * 0.13
+      frame.current.rotation.z += delta * 0.035
+      accent.current.rotation.y -= delta * 0.08
+      accent.current.rotation.x += delta * 0.045
     }
   })
 
   return (
-    <group ref={group}>
-      <mesh ref={shell}>
-        <icosahedronGeometry args={[1.34, 3]} />
-        <meshPhysicalMaterial
-          color="#8cc7ff"
-          emissive="#0a2a42"
-          emissiveIntensity={1.1}
-          metalness={0.82}
-          roughness={0.2}
-          transmission={0.18}
+    <group ref={group} position={[1.2, 0, 0]}>
+      {modules.map((module, index) => (
+        <mesh
+          key={index}
+          position={module.position}
+          scale={module.scale}
+        >
+          <boxGeometry args={[1, 1, 1]} />
+          <meshPhysicalMaterial
+            color={module.accent ? '#8bb8a4' : '#2f4e46'}
+            emissive={module.accent ? '#14392f' : '#0a1714'}
+            emissiveIntensity={module.accent ? 1.3 : 0.65}
+            metalness={0.74}
+            roughness={0.24}
+            transparent
+            opacity={module.accent ? 0.42 : 0.24}
+            wireframe
+          />
+        </mesh>
+      ))}
+
+      <ConnectionGrid />
+
+      <mesh ref={frame} rotation={[0.15, 0.28, 0.32]}>
+        <boxGeometry args={[5.2, 4.05, 2.25]} />
+        <meshBasicMaterial
+          color="#6d887f"
           transparent
-          opacity={0.38}
+          opacity={0.12}
           wireframe
         />
       </mesh>
 
-      <mesh scale={0.66}>
-        <icosahedronGeometry args={[1.1, 2]} />
+      <mesh ref={accent} position={[0.25, 0.05, 0.22]}>
+        <octahedronGeometry args={[0.34, 0]} />
         <meshStandardMaterial
-          color="#dceeff"
-          emissive="#2d7dad"
-          emissiveIntensity={0.55}
-          metalness={0.95}
-          roughness={0.14}
+          color="#d9573f"
+          emissive="#7b1e13"
+          emissiveIntensity={1.7}
+          metalness={0.66}
+          roughness={0.2}
         />
       </mesh>
 
-      <mesh ref={ringA} rotation={[Math.PI / 2.5, 0.35, 0]}>
-        <torusGeometry args={[1.88, 0.012, 16, 180]} />
-        <meshBasicMaterial color="#66baff" transparent opacity={0.5} />
-      </mesh>
-
-      <mesh ref={ringB} rotation={[0.3, Math.PI / 2.1, 0.4]}>
-        <torusGeometry args={[2.16, 0.008, 16, 180]} />
-        <meshBasicMaterial color="#d2eaff" transparent opacity={0.24} />
-      </mesh>
-
-      <pointLight color="#77c5ff" intensity={28} distance={7} />
+      <pointLight position={[0.25, 0.05, 1]} color="#d9573f" intensity={7} distance={3.6} />
+      <pointLight position={[-0.4, 0.1, 2]} color="#7fb8a2" intensity={16} distance={6.5} />
     </group>
   )
 }
@@ -132,15 +181,15 @@ function SystemCore({ reducedMotion }: SceneProps) {
 export default function SystemScene({ reducedMotion }: SceneProps) {
   return (
     <Canvas
-      dpr={[1, 1.6]}
-      camera={{ position: [0, 0, 6.4], fov: 42 }}
+      dpr={[1, 1.55]}
+      camera={{ position: [0, 0, 7.2], fov: 39 }}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
     >
-      <ambientLight intensity={0.24} />
-      <directionalLight position={[3, 4, 5]} intensity={2.5} color="#dbeeff" />
-      <directionalLight position={[-4, -2, 2]} intensity={1.8} color="#1b6f9d" />
+      <ambientLight intensity={0.16} />
+      <directionalLight position={[4, 5, 5]} intensity={2.2} color="#d8e1dc" />
+      <directionalLight position={[-4, -3, 1]} intensity={1.1} color="#446b60" />
       <ParticleField reducedMotion={reducedMotion} />
-      <SystemCore reducedMotion={reducedMotion} />
+      <ArchitectureSystem reducedMotion={reducedMotion} />
     </Canvas>
   )
 }
