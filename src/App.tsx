@@ -376,7 +376,8 @@ export default function App() {
                   className="index-row"
                   key={project.number}
                   onMouseEnter={() => setActiveProject(index)}
-                  onFocus={() => setActiveProject(index)}\n                  onClick={() => setActiveProject(index)}
+                  onFocus={() => setActiveProject(index)}
+                  onClick={() => setActiveProject(index)}
                 >
                   <span>{project.number}</span>
                   <strong>{project.name}</strong>
