@@ -376,7 +376,7 @@ export default function App() {
                   className="index-row"
                   key={project.number}
                   onMouseEnter={() => setActiveProject(index)}
-                  onFocus={() => setActiveProject(index)}
+                  onFocus={() => setActiveProject(index)}\n                  onClick={() => setActiveProject(index)}
                 >
                   <span>{project.number}</span>
                   <strong>{project.name}</strong>
@@ -455,6 +455,8 @@ export default function App() {
               >
                 GITHUB ↗
               </a>
+
+              <span className="contact-number">+51 901 036 216</span>
             </div>
           </div>
 
