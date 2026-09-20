@@ -2,57 +2,64 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
-import SystemScene from './components/SystemScene'
 
 gsap.registerPlugin(ScrollTrigger)
 
-function useReducedMotion() {
-  const [reduced, setReduced] = useState(false)
+const chapters = [
+  {
+    id: '01',
+    eyebrow: 'Problem',
+    title: 'The work was already telling us what to build.',
+    copy:
+      'Appointments crossed, paper records slowed reception, balances lived on the back of physical files and daily reporting meant typing the same information again.',
+    metric: 'AS-IS / FIELD OBSERVATION',
+  },
+  {
+    id: '02',
+    eyebrow: 'Field research',
+    title: 'Before proposing software, I mapped the operation.',
+    copy:
+      'I documented the real flow, measured waiting times, identified handoffs and separated assumptions from validated rules. The system starts with the clinic, not with the framework.',
+    metric: 'PROCESS / PEOPLE / TIME',
+  },
+  {
+    id: '03',
+    eyebrow: 'System design',
+    title: 'Business rules became architecture.',
+    copy:
+      'Scheduling, permissions, clinical records, payments and auditability were treated as connected responsibilities. The goal was not more screens. It was less operational friction.',
+    metric: 'RULES / BOUNDARIES / DATA',
+  },
+  {
+    id: '04',
+    eyebrow: 'Build',
+    title: 'The product is still evolving with real constraints.',
+    copy:
+      'BRACKET is being developed iteratively, with security and maintainability treated as product requirements rather than cleanup tasks for the end.',
+    metric: 'MVP / ITERATION / REAL USERS',
+  },
+]
 
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const update = () => setReduced(query.matches)
-    update()
-    query.addEventListener('change', update)
-    return () => query.removeEventListener('change', update)
-  }, [])
-
-  return reduced
-}
-
-function PointerGlow() {
-  const glow = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (window.matchMedia('(pointer: coarse)').matches) return
-
-    const move = (event: PointerEvent) => {
-      if (!glow.current) return
-      glow.current.style.transform =
-        'translate3d(' + (event.clientX - 180) + 'px,' + (event.clientY - 180) + 'px,0)'
-    }
-
-    window.addEventListener('pointermove', move, { passive: true })
-    return () => window.removeEventListener('pointermove', move)
-  }, [])
-
-  return <div ref={glow} className="pointer-glow" aria-hidden="true" />
-}
+const projects = [
+  ['001', 'BRACKET', 'BUSINESS SOFTWARE', '2026'],
+  ['002', 'ACCOUNTING SYSTEM', 'FULLSTACK / DOMAIN LOGIC', '2026'],
+  ['003', 'SIGET-ML', 'ML / PROCESS AUTOMATION', '2026'],
+  ['004', 'VISION SYSTEM', 'COMPUTER VISION', '2026'],
+]
 
 export default function App() {
   const root = useRef<HTMLDivElement>(null)
-  const reducedMotion = useReducedMotion()
+  const [activeChapter, setActiveChapter] = useState(0)
 
   useEffect(() => {
-    if (reducedMotion) return
-
     const lenis = new Lenis({
-      lerp: 0.075,
+      lerp: 0.08,
       smoothWheel: true,
-      wheelMultiplier: 0.9,
+      wheelMultiplier: 0.92,
     })
 
     let frame = 0
+
     const raf = (time: number) => {
       lenis.raf(time)
       frame = requestAnimationFrame(raf)
@@ -65,44 +72,31 @@ export default function App() {
       cancelAnimationFrame(frame)
       lenis.destroy()
     }
-  }, [reducedMotion])
+  }, [])
 
   useLayoutEffect(() => {
     if (!root.current) return
 
     const context = gsap.context(() => {
-      if (reducedMotion) {
-        gsap.set('.intro-screen', { display: 'none' })
-        return
-      }
+      gsap.from('.hero-word', {
+        yPercent: 120,
+        opacity: 0,
+        stagger: 0.08,
+        duration: 1,
+        ease: 'power4.out',
+      })
 
-      const intro = gsap.timeline()
-      intro
-        .from('.intro-kicker', { opacity: 0, y: 12, duration: 0.5 })
-        .from('.intro-line span', { scaleX: 0, duration: 0.85, ease: 'power3.inOut' }, '-=0.18')
-        .from('.intro-mark', { opacity: 0, scale: 0.82, duration: 0.45 }, '-=0.3')
-        .to('.intro-screen', {
-          opacity: 0,
-          duration: 0.65,
-          delay: 0.18,
-          pointerEvents: 'none',
-          onComplete: () => gsap.set('.intro-screen', { display: 'none' }),
-        })
-        .from(
-          ['.hero-kicker', '.hero-title .line', '.hero-copy', '.hero-actions', '.hero-meta', '.hero-signature'],
-          {
-            opacity: 0,
-            y: 34,
-            stagger: 0.065,
-            duration: 0.9,
-            ease: 'power3.out',
-          },
-          '-=0.2',
-        )
+      gsap.from('.hero-meta > *', {
+        y: 20,
+        opacity: 0,
+        stagger: 0.08,
+        duration: 0.75,
+        delay: 0.35,
+        ease: 'power3.out',
+      })
 
-      gsap.to('.hero-copy-layer', {
-        yPercent: -14,
-        opacity: 0.1,
+      gsap.to('.hero-title', {
+        yPercent: -10,
         ease: 'none',
         scrollTrigger: {
           trigger: '.hero',
@@ -112,219 +106,200 @@ export default function App() {
         },
       })
 
-      gsap.to('.system-legend', {
-        yPercent: -24,
-        opacity: 0,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.hero',
-          start: 'top top',
-          end: 'bottom 20%',
-          scrub: 1,
-        },
+      gsap.utils.toArray<HTMLElement>('.chapter').forEach((chapter, index) => {
+        ScrollTrigger.create({
+          trigger: chapter,
+          start: 'top 48%',
+          end: 'bottom 48%',
+          onEnter: () => setActiveChapter(index),
+          onEnterBack: () => setActiveChapter(index),
+        })
+
+        gsap.from(chapter.querySelectorAll('.chapter-reveal'), {
+          y: 32,
+          opacity: 0,
+          stagger: 0.08,
+          duration: 0.75,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: chapter,
+            start: 'top 72%',
+          },
+        })
       })
 
-      gsap.from('.origin-line', {
-        yPercent: 108,
+      gsap.from('.index-row', {
+        y: 28,
         opacity: 0,
-        stagger: 0.08,
+        stagger: 0.07,
+        duration: 0.75,
         ease: 'power3.out',
         scrollTrigger: {
-          trigger: '.origin',
-          start: 'top 76%',
-          end: 'center 48%',
-          scrub: 0.8,
-        },
-      })
-
-      gsap.from('.principle-card', {
-        y: 42,
-        opacity: 0,
-        stagger: 0.12,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.principles',
+          trigger: '.project-index',
           start: 'top 72%',
         },
       })
     }, root)
 
     return () => context.revert()
-  }, [reducedMotion])
+  }, [])
+
+  const current = chapters[activeChapter]
 
   return (
-    <div ref={root} className="app-shell">
-      <a className="skip-link" href="#main">
-        Skip to content
-      </a>
-
-      <PointerGlow />
-
-      <div className="intro-screen" aria-hidden="true">
-        <div className="intro-mark">齐天</div>
-        <p className="intro-kicker">SAMUEL QUISPE / QITIAN SYSTEMS LAB</p>
-        <div className="intro-line"><span /></div>
-        <p className="intro-status">FROM REAL PROBLEMS TO DIGITAL SYSTEMS</p>
-      </div>
-
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label="Samuel home">
-          SQ <span>/</span> QITIAN
-        </a>
-        <div className="header-status">
-          <span className="status-dot" />
-          BUILDING · LEARNING · ITERATING
-        </div>
-        <a className="header-link" href="#contact">CONTACT</a>
+    <div ref={root} className="site-shell">
+      <header className="topbar">
+        <a href="#top" className="wordmark">SAMUEL QUISPE</a>
+        <div className="topbar-center">SOFTWARE / SYSTEMS / PRODUCT</div>
+        <a href="#contact" className="topbar-link">CONTACT ↗</a>
       </header>
 
-      <main id="main">
+      <main>
         <section className="hero" id="top">
-          <div className="scene-layer" aria-hidden="true">
-            <SystemScene reducedMotion={reducedMotion} />
-          </div>
+          <div className="hero-index">PORTFOLIO / 2026</div>
 
-          <div className="hero-grid" aria-hidden="true" />
-          <div className="hero-axis" aria-hidden="true" />
+          <h1 className="hero-title" aria-label="Software engineering and systems">
+            <span className="hero-mask"><span className="hero-word">SOFTWARE</span></span>
+            <span className="hero-mask"><span className="hero-word outline">ENGINEERING</span></span>
+            <span className="hero-mask"><span className="hero-word">& SYSTEMS</span></span>
+          </h1>
 
-          <div className="hero-copy-layer">
-            <p className="hero-kicker">
-              SOFTWARE ENGINEERING / ARCHITECTURE / PRODUCT · PUNO, PERÚ
-            </p>
-
-            <h1 className="hero-title">
-              <span className="line">UNDERSTAND.</span>
-              <span className="line outline">DESIGN.</span>
-              <span className="line">BUILD.</span>
-            </h1>
-
-            <p className="hero-copy">
-              I turn real operational problems into software systems by understanding
-              the process first, designing the structure, and only then writing code.
-            </p>
-
-            <div className="hero-actions">
-              <a className="primary-action" href="#origin">
-                <span>ENTER THE SYSTEM</span>
-                <span aria-hidden="true">↘</span>
-              </a>
-              <span className="micro-note">STILL LEARNING · ALREADY BUILDING</span>
-            </div>
-
-            <div className="hero-signature" aria-hidden="true">
-              <span className="signature-seal">齐天</span>
-              <span>QITIAN / 001</span>
-            </div>
-
-            <div className="hero-meta">
-              <span>01 / PERSONAL SYSTEM</span>
-              <span>SCROLL TO DECOMPOSE</span>
-            </div>
-          </div>
-
-          <div className="system-legend" aria-hidden="true">
-            <span>01 · PROBLEM</span>
-            <span>02 · PROCESS</span>
-            <span>03 · DATA</span>
-            <span>04 · ARCHITECTURE</span>
-            <span>05 · PRODUCT</span>
-          </div>
-        </section>
-
-        <section className="origin" id="origin">
-          <div className="section-index">02 / ORIGIN</div>
-
-          <div className="origin-copy" aria-label="Real problems first. Software second.">
-            <div className="origin-mask"><span className="origin-line">REAL PROBLEMS</span></div>
-            <div className="origin-mask"><span className="origin-line jade">FIRST.</span></div>
-            <div className="origin-mask"><span className="origin-line">SOFTWARE SECOND.</span></div>
-          </div>
-
-          <div className="origin-foot">
+          <div className="hero-meta">
             <p>
-              My path into software did not begin in a design studio. It came through
-              field work, mining, study, and building tools for real businesses.
-              That taught me to look at the system before reaching for the code.
+              I study real operations, translate them into structure and build software
+              around the rules that actually matter.
             </p>
-            <div className="origin-coordinates">
-              <span>PUNO / PERÚ</span>
-              <span>ENGINEERING IN PROGRESS</span>
-              <span>PRODUCT MINDSET</span>
+
+            <div className="hero-facts">
+              <span>PUNO, PERÚ</span>
+              <span>STUDENT / BUILDER</span>
+              <span>ARCHITECTURE / PRODUCT</span>
+            </div>
+          </div>
+
+          <div className="hero-foot">
+            <span>SELECTED WORK ↓</span>
+            <span>01 / 04</span>
+          </div>
+        </section>
+
+        <section className="feature" id="work">
+          <div className="feature-intro">
+            <span>01 / SELECTED WORK</span>
+            <h2>One project.<br />Four decisions.</h2>
+            <p>
+              BRACKET is the project where I am learning to connect field research,
+              architecture, product decisions and implementation.
+            </p>
+          </div>
+
+          <div className="case-layout">
+            <aside className="case-sticky">
+              <div className="case-visual">
+                <div className="case-visual-top">
+                  <span>CASE STUDY 001</span>
+                  <span>{current.id} / 04</span>
+                </div>
+
+                <div className="case-visual-core">
+                  <span className="case-kicker">{current.eyebrow}</span>
+                  <strong>BRACKET</strong>
+                  <span className="case-status">IN DEVELOPMENT</span>
+                </div>
+
+                <div className="case-diagram" aria-hidden="true">
+                  <span className="diagram-node node-a">FIELD</span>
+                  <span className="diagram-node node-b">RULES</span>
+                  <span className="diagram-node node-c">DATA</span>
+                  <span className="diagram-node node-d">SYSTEM</span>
+                  <span className="diagram-node node-e">PRODUCT</span>
+                  <i className="diagram-line line-1" />
+                  <i className="diagram-line line-2" />
+                  <i className="diagram-line line-3" />
+                  <i className="diagram-line line-4" />
+                </div>
+
+                <div className="case-visual-foot">
+                  <span>{current.metric}</span>
+                  <span>PUNO / PE</span>
+                </div>
+              </div>
+            </aside>
+
+            <div className="chapters">
+              {chapters.map((chapter) => (
+                <article className="chapter" key={chapter.id}>
+                  <div className="chapter-number chapter-reveal">{chapter.id}</div>
+                  <div className="chapter-copy">
+                    <span className="chapter-eyebrow chapter-reveal">{chapter.eyebrow}</span>
+                    <h3 className="chapter-reveal">{chapter.title}</h3>
+                    <p className="chapter-reveal">{chapter.copy}</p>
+                    <span className="chapter-metric chapter-reveal">{chapter.metric}</span>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="principles">
-          <div className="section-index">03 / HOW I THINK</div>
+        <section className="statement">
+          <div className="statement-label">02 / APPROACH</div>
+          <p>
+            I am not interested in collecting frameworks.
+            <span> I want to understand the system well enough to choose them.</span>
+          </p>
+        </section>
 
-          <div className="principles-grid">
-            <article className="principle-card">
-              <span className="principle-number">01</span>
-              <h2>Understand the process.</h2>
-              <p>
-                Before choosing a framework, I want to know the workflow, the people,
-                the constraints, the data and what can actually go wrong.
-              </p>
-            </article>
+        <section className="project-index">
+          <div className="index-heading">
+            <span>03 / PROJECT INDEX</span>
+            <h2>Selected systems</h2>
+          </div>
 
-            <article className="principle-card">
-              <span className="principle-number">02</span>
-              <h2>Design the system.</h2>
-              <p>
-                Responsibilities, boundaries, business rules, security and trade-offs
-                should be visible before the codebase becomes a maze.
-              </p>
-            </article>
-
-            <article className="principle-card accent-card">
-              <span className="principle-number">03</span>
-              <h2>Build what matters.</h2>
-              <p>
-                Useful software is not the one with the most features. It is the one
-                that removes friction and survives contact with real users.
-              </p>
-            </article>
+          <div className="index-table">
+            {projects.map(([number, name, type, year]) => (
+              <div className="index-row" key={number}>
+                <span>{number}</span>
+                <strong>{name}</strong>
+                <span>{type}</span>
+                <span>{year}</span>
+                <span className="index-arrow">↗</span>
+              </div>
+            ))}
           </div>
         </section>
 
-        <section className="project-teaser" id="work">
-          <div className="section-index">04 / CURRENT SYSTEM</div>
+        <section className="about">
+          <div className="about-label">04 / ABOUT</div>
 
-          <div className="project-heading">
-            <p>CASE STUDY / 001 · IN DEVELOPMENT</p>
-            <h2>BRACKET</h2>
-            <p className="project-subtitle">
-              Dental operations software shaped from real workflows in Puno, Perú.
-            </p>
-          </div>
+          <div className="about-grid">
+            <h2>
+              Still learning.<br />
+              Already building.
+            </h2>
 
-          <div className="project-data">
-            <span>REAL WORKFLOWS</span>
-            <span>BUSINESS RULES</span>
-            <span>SECURITY + AUDIT</span>
-            <span>PRODUCT IN PROGRESS</span>
-          </div>
-
-          <div className="project-philosophy">
-            <span>PROBLEM</span>
-            <i>→</i>
-            <span>PROCESS</span>
-            <i>→</i>
-            <span>SYSTEM</span>
-            <i>→</i>
-            <span>PRODUCT</span>
+            <div className="about-copy">
+              <p>
+                I am studying Software Engineering with AI while building business software
+                and learning architecture, security, product development and data from the ground up.
+              </p>
+              <p>
+                Long term, I want to build a software consultancy focused on useful, maintainable
+                products for real organizations.
+              </p>
+            </div>
           </div>
         </section>
 
         <footer id="contact">
-          <div>
-            <span className="footer-mark">齐天 / QITIAN</span>
-            <p>BUILD WITH PURPOSE.</p>
+          <div className="footer-small">SAMUEL QUISPE / PUNO, PERÚ / 2026</div>
+
+          <div className="footer-main">
+            <p>LET&apos;S BUILD<br />SOMETHING USEFUL.</p>
+            <a href="https://github.com/SamuelShiw" target="_blank" rel="noreferrer">
+              GITHUB ↗
+            </a>
           </div>
-          <a href="https://github.com/SamuelShiw" target="_blank" rel="noreferrer">
-            GITHUB ↗
-          </a>
         </footer>
       </main>
     </div>
