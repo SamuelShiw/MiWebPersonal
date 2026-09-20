@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
@@ -41,17 +41,58 @@ const chapters = [
 ]
 
 const projects = [
-  ['001', 'BRACKET', 'BUSINESS SOFTWARE', '2026'],
-  ['002', 'ACCOUNTING SYSTEM', 'FULLSTACK / DOMAIN LOGIC', '2026'],
-  ['003', 'SIGET-ML', 'ML / PROCESS AUTOMATION', '2026'],
-  ['004', 'VISION SYSTEM', 'COMPUTER VISION', '2026'],
+  {
+    number: '001',
+    name: 'BRACKET',
+    type: 'BUSINESS SOFTWARE',
+    year: '2026',
+    note: 'Dental operations / workflow / security',
+  },
+  {
+    number: '002',
+    name: 'ACCOUNTING SYSTEM',
+    type: 'FULLSTACK / DOMAIN LOGIC',
+    year: '2026',
+    note: 'Accounting modules / audit / business rules',
+  },
+  {
+    number: '003',
+    name: 'SIGET-ML',
+    type: 'ML / PROCESS AUTOMATION',
+    year: '2026',
+    note: 'Municipal workflow / prediction / prioritization',
+  },
+  {
+    number: '004',
+    name: 'VISION SYSTEM',
+    type: 'COMPUTER VISION',
+    year: '2026',
+    note: 'Detection / monitoring / architecture',
+  },
 ]
+
+const whatsappMessage =
+  'Hola J. Samuel, vi tu portafolio y me gustaría conversar contigo sobre un proyecto.'
+
+const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER?.replace(/\D/g, '') ?? ''
 
 export default function App() {
   const root = useRef<HTMLDivElement>(null)
   const [activeChapter, setActiveChapter] = useState(0)
+  const [activeProject, setActiveProject] = useState(0)
+
+  const whatsappUrl = useMemo(() => {
+    const text = encodeURIComponent(whatsappMessage)
+
+    return whatsappNumber
+      ? `https://wa.me/${whatsappNumber}?text=${text}`
+      : `https://api.whatsapp.com/send?text=${text}`
+  }, [])
 
   useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduceMotion) return
+
     const lenis = new Lenis({
       lerp: 0.08,
       smoothWheel: true,
@@ -76,6 +117,9 @@ export default function App() {
 
   useLayoutEffect(() => {
     if (!root.current) return
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduceMotion) return
 
     const context = gsap.context(() => {
       gsap.from('.hero-word', {
@@ -128,6 +172,18 @@ export default function App() {
         })
       })
 
+      gsap.from('.method-step', {
+        y: 36,
+        opacity: 0,
+        stagger: 0.08,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.method-band',
+          start: 'top 72%',
+        },
+      })
+
       gsap.from('.index-row', {
         y: 28,
         opacity: 0,
@@ -139,17 +195,30 @@ export default function App() {
           start: 'top 72%',
         },
       })
+
+      gsap.from('.contact-main > *', {
+        y: 28,
+        opacity: 0,
+        stagger: 0.08,
+        duration: 0.75,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.contact-section',
+          start: 'top 74%',
+        },
+      })
     }, root)
 
     return () => context.revert()
   }, [])
 
   const current = chapters[activeChapter]
+  const currentProject = projects[activeProject]
 
   return (
     <div ref={root} className="site-shell">
       <header className="topbar">
-        <a href="#top" className="wordmark">SAMUEL QUISPE</a>
+        <a href="#top" className="wordmark">J. SAMUEL</a>
         <div className="topbar-center">SOFTWARE / SYSTEMS / PRODUCT</div>
         <a href="#contact" className="topbar-link">CONTACT ↗</a>
       </header>
@@ -177,9 +246,14 @@ export default function App() {
             </div>
           </div>
 
+          <div className="hero-signature" aria-hidden="true">
+            <span>QITIAN / 齐天</span>
+            <i />
+          </div>
+
           <div className="hero-foot">
             <span>SELECTED WORK ↓</span>
-            <span>01 / 04</span>
+            <span>01 / 05</span>
           </div>
         </section>
 
@@ -242,8 +316,46 @@ export default function App() {
           </div>
         </section>
 
+        <section className="method-band">
+          <div className="method-head">
+            <span>02 / OPERATING SYSTEM</span>
+            <p>HOW I APPROACH A REAL PROBLEM</p>
+          </div>
+
+          <div className="method-grid">
+            <article className="method-step">
+              <span>01</span>
+              <strong>UNDERSTAND</strong>
+              <p>Observe the work, people, delays and constraints before proposing a solution.</p>
+            </article>
+            <article className="method-step">
+              <span>02</span>
+              <strong>MODEL</strong>
+              <p>Translate reality into flows, states, responsibilities, rules and data.</p>
+            </article>
+            <article className="method-step">
+              <span>03</span>
+              <strong>DESIGN</strong>
+              <p>Choose boundaries, security, architecture and trade-offs deliberately.</p>
+            </article>
+            <article className="method-step accent-step">
+              <span>04</span>
+              <strong>BUILD</strong>
+              <p>Ship the useful part, verify it, learn from it and iterate without losing structure.</p>
+            </article>
+          </div>
+
+          <div className="method-flow" aria-hidden="true">
+            <span>PROBLEM</span><i>→</i>
+            <span>PROCESS</span><i>→</i>
+            <span>RULES</span><i>→</i>
+            <span>SYSTEM</span><i>→</i>
+            <span>PRODUCT</span>
+          </div>
+        </section>
+
         <section className="statement">
-          <div className="statement-label">02 / APPROACH</div>
+          <div className="statement-label">03 / APPROACH</div>
           <p>
             I am not interested in collecting frameworks.
             <span> I want to understand the system well enough to choose them.</span>
@@ -252,25 +364,46 @@ export default function App() {
 
         <section className="project-index">
           <div className="index-heading">
-            <span>03 / PROJECT INDEX</span>
+            <span>04 / PROJECT INDEX</span>
             <h2>Selected systems</h2>
           </div>
 
-          <div className="index-table">
-            {projects.map(([number, name, type, year]) => (
-              <div className="index-row" key={number}>
-                <span>{number}</span>
-                <strong>{name}</strong>
-                <span>{type}</span>
-                <span>{year}</span>
-                <span className="index-arrow">↗</span>
+          <div className="project-index-layout">
+            <div className="index-table">
+              {projects.map((project, index) => (
+                <button
+                  type="button"
+                  className="index-row"
+                  key={project.number}
+                  onMouseEnter={() => setActiveProject(index)}
+                  onFocus={() => setActiveProject(index)}
+                >
+                  <span>{project.number}</span>
+                  <strong>{project.name}</strong>
+                  <span>{project.type}</span>
+                  <span>{project.year}</span>
+                  <span className="index-arrow">↗</span>
+                </button>
+              ))}
+            </div>
+
+            <aside className="project-preview" aria-live="polite">
+              <div className="preview-number">{currentProject.number}</div>
+              <div className="preview-content">
+                <span>{currentProject.type}</span>
+                <strong>{currentProject.name}</strong>
+                <p>{currentProject.note}</p>
               </div>
-            ))}
+              <div className="preview-foot">
+                <span>J. SAMUEL / SELECTED WORK</span>
+                <span>{currentProject.year}</span>
+              </div>
+            </aside>
           </div>
         </section>
 
         <section className="about">
-          <div className="about-label">04 / ABOUT</div>
+          <div className="about-label">05 / ABOUT</div>
 
           <div className="about-grid">
             <h2>
@@ -287,18 +420,56 @@ export default function App() {
                 Long term, I want to build a software consultancy focused on useful, maintainable
                 products for real organizations.
               </p>
+
+              <div className="about-meta">
+                <div><span>NOW</span><b>BUSINESS SOFTWARE</b></div>
+                <div><span>LEARNING</span><b>ARCHITECTURE / SECURITY / AI</b></div>
+                <div><span>NEXT</span><b>CONSULTING / PRODUCTS</b></div>
+              </div>
             </div>
           </div>
         </section>
 
-        <footer id="contact">
-          <div className="footer-small">SAMUEL QUISPE / PUNO, PERÚ / 2026</div>
+        <section className="contact-section" id="contact">
+          <div className="contact-label">06 / CONTACT</div>
+
+          <div className="contact-main">
+            <p>HAVE A PROBLEM<br />WORTH SOLVING?</p>
+
+            <div className="contact-actions">
+              <a
+                className="whatsapp-button"
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span>START ON WHATSAPP</span>
+                <span>↗</span>
+              </a>
+
+              <a
+                className="secondary-contact"
+                href="https://github.com/SamuelShiw"
+                target="_blank"
+                rel="noreferrer"
+              >
+                GITHUB ↗
+              </a>
+            </div>
+          </div>
+
+          <div className="message-preview">
+            <span>SUGGESTED MESSAGE</span>
+            <p>“{whatsappMessage}”</p>
+          </div>
+        </section>
+
+        <footer>
+          <div className="footer-small">J. SAMUEL / PUNO, PERÚ / 2026</div>
 
           <div className="footer-main">
-            <p>LET&apos;S BUILD<br />SOMETHING USEFUL.</p>
-            <a href="https://github.com/SamuelShiw" target="_blank" rel="noreferrer">
-              GITHUB ↗
-            </a>
+            <p>BUILD<br />WITH PURPOSE.</p>
+            <span className="footer-mark">QITIAN / 齐天</span>
           </div>
         </footer>
       </main>
