@@ -84,9 +84,7 @@ export default function App() {
   const whatsappUrl = useMemo(() => {
     const text = encodeURIComponent(whatsappMessage)
 
-    return whatsappNumber
-      ? `https://wa.me/${whatsappNumber}?text=${text}`
-      : `https://api.whatsapp.com/send?text=${text}`
+    return `https://wa.me/${whatsappNumber}?text=${text}`
   }, [])
 
   useEffect(() => {
@@ -122,22 +120,47 @@ export default function App() {
     if (reduceMotion) return
 
     const context = gsap.context(() => {
-      gsap.from('.hero-word', {
-        yPercent: 120,
-        opacity: 0,
-        stagger: 0.08,
-        duration: 1,
-        ease: 'power4.out',
-      })
+      const intro = gsap.timeline()
 
-      gsap.from('.hero-meta > *', {
-        y: 20,
-        opacity: 0,
-        stagger: 0.08,
-        duration: 0.75,
-        delay: 0.35,
-        ease: 'power3.out',
-      })
+      intro
+        .from('.loader-line span', {
+          yPercent: 115,
+          stagger: 0.08,
+          duration: 0.7,
+          ease: 'power4.out',
+        })
+        .from('.loader-meta', {
+          opacity: 0,
+          y: 10,
+          duration: 0.35,
+        }, '-=0.32')
+        .to('.motion-loader', {
+          yPercent: -100,
+          duration: 0.85,
+          ease: 'power4.inOut',
+          delay: 0.12,
+          pointerEvents: 'none',
+        })
+        .from('.hero-word', {
+          yPercent: 120,
+          opacity: 0,
+          stagger: 0.08,
+          duration: 1,
+          ease: 'power4.out',
+        }, '-=0.35')
+        .from('.hero-meta > *', {
+          y: 20,
+          opacity: 0,
+          stagger: 0.08,
+          duration: 0.75,
+          ease: 'power3.out',
+        }, '-=0.55')
+        .from('.hero-signature, .hero-foot', {
+          opacity: 0,
+          y: 12,
+          duration: 0.5,
+          ease: 'power2.out',
+        }, '-=0.5')
 
       gsap.to('.hero-title', {
         yPercent: -10,
@@ -147,6 +170,65 @@ export default function App() {
           start: 'top top',
           end: 'bottom top',
           scrub: 1,
+        },
+      })
+
+      gsap.set('.motion-card-a', { x: '-38vw', y: '-24vh', rotate: -18, scale: 0.72 })
+      gsap.set('.motion-card-b', { x: '33vw', y: '-30vh', rotate: 15, scale: 0.78 })
+      gsap.set('.motion-card-c', { x: '-34vw', y: '28vh', rotate: 12, scale: 0.76 })
+      gsap.set('.motion-card-d', { x: '36vw', y: '25vh', rotate: -13, scale: 0.74 })
+      gsap.set('.motion-card-e', { y: '38vh', rotate: 8, scale: 0.68 })
+      gsap.set('.motion-core', { scale: 0.35, rotate: -24, opacity: 0 })
+
+      const motionTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.motion-stage',
+          start: 'top top',
+          end: '+=180%',
+          scrub: 1,
+          pin: '.motion-stage-pin',
+          anticipatePin: 1,
+        },
+      })
+
+      motionTimeline
+        .to('.motion-card', {
+          x: 0,
+          y: 0,
+          rotate: 0,
+          scale: 1,
+          duration: 0.46,
+          stagger: 0.035,
+          ease: 'power3.out',
+        }, 0)
+        .to('.motion-core', {
+          scale: 1,
+          rotate: 0,
+          opacity: 1,
+          duration: 0.32,
+          ease: 'back.out(1.5)',
+        }, 0.22)
+        .to('.motion-stage-copy', {
+          yPercent: -8,
+          opacity: 0.16,
+          duration: 0.28,
+        }, 0.66)
+        .to('.motion-card-a', { x: '-17vw', y: '-12vh', rotate: -8, duration: 0.3 }, 0.69)
+        .to('.motion-card-b', { x: '16vw', y: '-14vh', rotate: 7, duration: 0.3 }, 0.69)
+        .to('.motion-card-c', { x: '-18vw', y: '14vh', rotate: 6, duration: 0.3 }, 0.69)
+        .to('.motion-card-d', { x: '17vw', y: '13vh', rotate: -7, duration: 0.3 }, 0.69)
+        .to('.motion-card-e', { y: '20vh', rotate: 4, duration: 0.3 }, 0.69)
+        .to('.motion-core', { scale: 1.18, duration: 0.3 }, 0.69)
+
+      gsap.from('.case-visual', {
+        clipPath: 'inset(12% 12% 12% 12%)',
+        scale: 0.94,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.feature',
+          start: 'top 78%',
+          end: 'top 35%',
+          scrub: 0.8,
         },
       })
 
@@ -217,6 +299,17 @@ export default function App() {
 
   return (
     <div ref={root} className="site-shell">
+      <div className="motion-loader" aria-hidden="true">
+        <div className="loader-word">
+          <span className="loader-line"><span>J.</span></span>
+          <span className="loader-line"><span>SAMUEL</span></span>
+        </div>
+        <div className="loader-meta">
+          <span>SOFTWARE / SYSTEMS / PRODUCT</span>
+          <span>PUNO, PERÚ · 2026</span>
+        </div>
+      </div>
+
       <header className="topbar">
         <a href="#top" className="wordmark">J. SAMUEL</a>
         <div className="topbar-center">SOFTWARE / SYSTEMS / PRODUCT</div>
@@ -256,6 +349,45 @@ export default function App() {
             <span>01 / 05</span>
           </div>
         </section>
+
+        <section className="motion-stage" aria-label="From reality to system">
+          <div className="motion-stage-pin">
+            <div className="motion-stage-meta">
+              <span>00 / MOTION SYSTEM</span>
+              <span>SCROLL TO ASSEMBLE</span>
+            </div>
+
+            <div className="motion-stage-copy">
+              <span className="motion-eyebrow">HOW I SEE SOFTWARE</span>
+              <h2>
+                <span>FROM</span>
+                <span className="motion-outline">REALITY</span>
+                <span>TO SYSTEM.</span>
+              </h2>
+            </div>
+
+            <div className="motion-sculpture" aria-hidden="true">
+              <div className="motion-card motion-card-a"><span>01</span><b>FIELD</b></div>
+              <div className="motion-card motion-card-b"><span>02</span><b>PROCESS</b></div>
+              <div className="motion-card motion-card-c"><span>03</span><b>RULES</b></div>
+              <div className="motion-card motion-card-d"><span>04</span><b>DATA</b></div>
+              <div className="motion-card motion-card-e"><span>05</span><b>PRODUCT</b></div>
+              <div className="motion-core">JS</div>
+            </div>
+
+            <div className="motion-stage-foot">
+              <span>J. SAMUEL / SYSTEM THINKING</span>
+              <span>QITIAN · 齐天</span>
+            </div>
+          </div>
+        </section>
+
+        <div className="kinetic-marquee" aria-hidden="true">
+          <div className="kinetic-track">
+            <span>REAL PROBLEMS / DIGITAL SYSTEMS / PRODUCT THINKING / </span>
+            <span>REAL PROBLEMS / DIGITAL SYSTEMS / PRODUCT THINKING / </span>
+          </div>
+        </div>
 
         <section className="feature" id="work">
           <div className="feature-intro">
@@ -439,7 +571,7 @@ export default function App() {
 
             <div className="contact-actions">
               <a
-                className="whatsapp-button"
+                className="whatsapp-button magnetic-button"
                 href={whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
