@@ -1,0 +1,1 @@
+export function PlaceholderPage({title}:{title:string}){return <section className="page-placeholder"><p className="section-label">J. SAMUEL / 2026</p><h1>{title}</h1><p>This route is prepared for Portfolio V2.</p></section>}
