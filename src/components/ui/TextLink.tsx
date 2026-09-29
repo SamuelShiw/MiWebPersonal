@@ -1,0 +1,1 @@
+import { Link } from "react-router-dom";export function TextLink({to,children}:{to:string;children:React.ReactNode}){return <Link className="text-link underline-link" to={to}>{children} ↗</Link>}
