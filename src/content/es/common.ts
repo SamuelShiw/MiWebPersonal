@@ -1,0 +1,1 @@
+export default {home:{hero:{copy:"Diseño y construyo productos de software que resuelven problemas del mundo real.",cta:"VER MI TRABAJO"},bracket:{description:"Plataforma de software diseñada para centralizar los procesos clínicos y administrativos de un centro odontológico."}}};
