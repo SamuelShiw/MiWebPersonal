@@ -1,0 +1,1 @@
+export function StatusGrid({items}:{items:{label:string;state:string;copy:string}[]}){return <div className="status-grid">{items.map(x=><article key={x.label}><p className="meta">{x.state}</p><h3>{x.label}</h3><p>{x.copy}</p></article>)}</div>}
