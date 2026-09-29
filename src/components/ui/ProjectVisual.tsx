@@ -1,1 +1,1 @@
-export function ProjectVisual({kind,label}:{kind:"light"|"dark";label:string}){return <div className={"project-visual "+kind} aria-label={label} role="img"><span>{label}</span></div>}
+export function ProjectVisual({kind,label}:{kind:"light"|"dark";label:string}){return <div className={"project-visual "+kind} data-reveal="visual" aria-label={label} role="img"><span>{label}</span></div>}
