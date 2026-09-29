@@ -79,8 +79,13 @@ No percentage skill bars.
 
 ## Contact
 Intent: software projects, collaborations and professional opportunities.
-GitHub is verified in the implementation.
-Email, LinkedIn and WhatsApp are intentionally unresolved until real public values are supplied. Do not fabricate them.
+Verified public contact channels:
+- Email: sumailqm10@gmail.com
+- LinkedIn: https://www.linkedin.com/in/j-samuell/
+- GitHub: https://github.com/SamuelShiw
+- WhatsApp: +51 901 036 216
+
+These values are confirmed. Preserve functional contact access even if their visual presentation is redesigned.
 
 ## Motion, responsive, accessibility and performance
 Motion must explain hierarchy, causality or system behavior. Respect `prefers-reduced-motion`; avoid scroll hijacking. Functional motion 150–250 ms, interface 400–700 ms, cinematic 700–1200 ms as guidance, not rigid law.
