@@ -1,0 +1,1 @@
+export default {home:{hero:{copy:"I design and build software products that solve real-world problems.",cta:"VIEW SELECTED WORK"},bracket:{description:"A software platform designed to centralize clinical and administrative workflows for a dental clinic."}}};
