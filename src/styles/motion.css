@@ -1,39 +1,17 @@
 @media (prefers-reduced-motion:no-preference){
-.route-enter{animation:routeIn 520ms var(--ease-enter) both}
-.site-header{animation:fadeDown 520ms var(--ease-enter) both}
-.hero-line{opacity:0;transform:translateY(105%);animation:heroLine 760ms var(--ease-enter) forwards}
-.hero h1{overflow:hidden}
-.hero .line-1{animation-delay:100ms}.hero .line-2{animation-delay:220ms}.hero .line-3{animation-delay:380ms}.hero .line-4{animation-delay:500ms}
-.hero-meta,.hero-copy-motion,.hero-cta{opacity:0;transform:translateY(12px);animation:softRise 520ms var(--ease-enter) forwards}
-.hero-meta{animation-delay:40ms}.hero-copy-motion{animation-delay:720ms}.hero-cta{animation-delay:900ms}
-[data-reveal]{opacity:0;transform:translateY(16px);transition:opacity 520ms var(--ease-enter),transform 650ms var(--ease-enter)}
-[data-reveal="visual"]{transform:translateY(18px) scale(1.02);clip-path:inset(0 0 8% 0);transition:opacity 700ms var(--ease-enter),transform 800ms var(--ease-enter),clip-path 800ms var(--ease-enter)}
+.route-enter{animation:routeIn 620ms var(--ease-enter) both}.site-header{animation:fadeDown 650ms var(--ease-enter) both}
+.hero-line{opacity:0;transform:translateY(120%);filter:blur(6px);animation:heroLine 900ms var(--ease-enter) forwards;will-change:transform,opacity}.hero h1{overflow:hidden}.hero .line-1{animation-delay:100ms}.hero .line-2{animation-delay:240ms}.hero .line-3{animation-delay:430ms}.hero .line-4{animation-delay:580ms}
+.hero-meta,.hero-copy-motion,.hero-cta{opacity:0;transform:translateY(24px);animation:softRise 700ms var(--ease-enter) forwards}.hero-meta{animation-delay:80ms}.hero-copy-motion{animation-delay:850ms}.hero-cta{animation-delay:1050ms}
+[data-reveal]{opacity:0;transform:translateY(42px);transition:opacity 720ms var(--ease-enter),transform 900ms var(--ease-enter),clip-path 950ms var(--ease-enter);transition-delay:calc(var(--reveal-index,0)*55ms);will-change:transform,opacity}
+[data-reveal="visual"]{transform:translateY(52px) scale(1.045);clip-path:inset(0 0 18% 0);transition-duration:950ms}
 [data-reveal][data-visible="true"]{opacity:1;transform:translateY(0) scale(1);clip-path:inset(0)}
-.project-visual{overflow:hidden;transition:transform 700ms var(--ease-enter)}
-.project-visual:hover{transform:scale(1.012)}
-.capability,.focus-row,.other-card,.architecture-grid span,.status-grid article{transition:transform 220ms ease-out,opacity 220ms ease-out}
-.capability:hover,.focus-row:hover{transform:translateX(8px)}
-.other-card:hover{transform:translateY(-5px)}
-.architecture-grid span:hover,.status-grid article:hover{opacity:.62}
-.text-link{transition:opacity 180ms ease-out}.text-link:hover{opacity:.55}
-.mobile-menu{animation:menuPanel 480ms var(--ease-enter) both}
-.mobile-menu nav a{opacity:0;transform:translateY(18px);animation:softRise 520ms var(--ease-enter) forwards}
-.mobile-menu nav a:nth-child(1){animation-delay:80ms}.mobile-menu nav a:nth-child(2){animation-delay:130ms}.mobile-menu nav a:nth-child(3){animation-delay:180ms}
-.case-hero .section-label{animation:softRise 500ms var(--ease-enter) both}
-.case-hero h1{animation:caseTitle 800ms 120ms var(--ease-enter) both}
-.case-hero-meta{animation:softRise 550ms 360ms var(--ease-enter) both}
-.mining-case .case-flow.large{position:relative;overflow:hidden}
-.mining-case .source-stack span,.mining-case .source-stack strong{transition:transform 260ms ease-out,background 260ms ease-out}
-.mining-case .source-stack span:hover,.mining-case .source-stack strong:hover{transform:translateY(-4px)}
-@keyframes routeIn{from{opacity:.001}to{opacity:1}}
-@keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-@keyframes heroLine{from{opacity:0;transform:translateY(105%)}to{opacity:1;transform:translateY(0)}}
-@keyframes softRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@keyframes caseTitle{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
-@keyframes menuPanel{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
+.project-visual{overflow:hidden;transition:transform 650ms var(--ease-enter),box-shadow 650ms var(--ease-enter)}.project-visual:hover{transform:scale(1.022);box-shadow:0 26px 70px rgba(17,17,17,.1)}
+.ui-ghost{transition:transform 850ms var(--ease-enter)}.project-visual:hover .ui-ghost{transform:scale(1.018) translateY(-3px)}
+.capability,.focus-row,.other-card,.architecture-grid span,.status-grid article{transition:transform 280ms var(--ease-enter),opacity 220ms ease-out}.capability:hover,.focus-row:hover{transform:translateX(14px)}.other-card:hover{transform:translateY(-9px)}.architecture-grid span:hover,.status-grid article:hover{opacity:.62}
+.text-link{transition:opacity 180ms ease-out,transform 220ms ease-out}.text-link:hover{opacity:.58;transform:translateX(4px)}
+.mobile-menu{animation:menuPanel 560ms var(--ease-enter) both}.mobile-menu nav a{opacity:0;transform:translateY(28px);animation:softRise 620ms var(--ease-enter) forwards}.mobile-menu nav a:nth-child(1){animation-delay:110ms}.mobile-menu nav a:nth-child(2){animation-delay:180ms}.mobile-menu nav a:nth-child(3){animation-delay:250ms}
+.case-hero .section-label{animation:softRise 600ms var(--ease-enter) both}.case-hero h1{animation:caseTitle 950ms 130ms var(--ease-enter) both}.case-hero-meta{animation:softRise 700ms 420ms var(--ease-enter) both}
+.mining-case .source-stack span,.mining-case .source-stack strong{transition:transform 320ms var(--ease-enter)}.mining-case .source-stack span:hover,.mining-case .source-stack strong:hover{transform:translateY(-7px)}
+@keyframes routeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}@keyframes heroLine{0%{opacity:0;transform:translateY(120%);filter:blur(6px)}100%{opacity:1;transform:translateY(0);filter:blur(0)}}@keyframes softRise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}@keyframes caseTitle{from{opacity:0;transform:translateY(46px);letter-spacing:-.075em}to{opacity:1;transform:none}}@keyframes menuPanel{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
 }
-@media (prefers-reduced-motion:reduce){
-html{scroll-behavior:auto}
-*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-[data-reveal],.hero-line,.hero-meta,.hero-copy-motion,.hero-cta{opacity:1!important;transform:none!important;clip-path:none!important}
-}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}[data-reveal],.hero-line,.hero-meta,.hero-copy-motion,.hero-cta{opacity:1!important;transform:none!important;clip-path:none!important;filter:none!important}}
