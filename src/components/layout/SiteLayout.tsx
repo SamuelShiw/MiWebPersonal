@@ -1,0 +1,1 @@
+import type { PropsWithChildren } from "react";import { Header } from "./Header";export function SiteLayout({children}:PropsWithChildren){return <><Header/><main>{children}</main></>}
