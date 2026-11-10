@@ -9,10 +9,10 @@ export function EditorialHome(){
   <section id="intro" className="jm-panel jm-cover" aria-label="Portada">
    <div className="jm-mark" aria-label="JMael">JM<span>.</span></div>
    <div className="jm-cover-main"><div className="jm-cover-portrait" role="img" aria-label="Retrato provisional de perfil"/><div className="jm-cover-heading"><h1>PORTFOLIO</h1><span>2026</span><p><i/> CREATIVE DEVELOPER</p></div></div>
-   <nav className="jm-start-menu" aria-label="Menú de entrada"><button onClick={()=>jump("profile")}>START</button><button onClick={()=>jump("profile")}>OPTIONS</button><button onClick={()=>jump("contact")}>CONTACT</button></nav>
+   <nav className="jm-start-menu" aria-label="Menú de entrada"><button onClick={()=>jump("profile")}>START</button><button onClick={()=>jump("projects")}>PROJECTS</button><button onClick={()=>jump("contact")}>CONTACT</button></nav>
   </section>
   <section id="profile" className="jm-panel jm-profile">
-   <header className="jm-panel-nav"><a className="jm-mini-mark" href="#intro">JM.</a><button className="jm-mobile-toggle" onClick={()=>setMenu(!menu)} aria-expanded={menu}>MENU</button><nav className={menu?"is-open":""}>{links.map(l=><button key={l.id} className={l.id==="profile"?"active":""} onClick={()=>jump(l.id)}>{l.label}</button>)}</nav></header>
+   <header className="jm-panel-nav"><a className="jm-mini-mark" href="#intro">JM.</a><nav className={menu?"is-open":""}>{links.map(l=><button key={l.id} className={l.id==="profile"?"active":""} onClick={()=>jump(l.id)}>{l.label}</button>)}</nav></header>
    <div className="jm-profile-grid"><div className="jm-person"><span>HELLO, I AM</span><h2>J. SAMUEL</h2><div className="jm-photo jm-photo-profile" role="img" aria-label="Fotografía de perfil provisional"/></div>
    <div className="jm-bio"><h2>ABOUT ME</h2><p>Soy J. Samuel, desarrollador full-stack y creador digital de Puno, Perú. Diseño soluciones, construyo productos y comparto el proceso de convertir problemas reales en software.</p><h3>SOFTWARE SKILLS</h3><div className="jm-skills"><span>TS</span><span>REACT</span><span>NODE</span><span>SQL</span><span>UI</span></div><div className="jm-details"><div><h3>EDUCATION</h3><p>SENATI<br/>Ingeniería de Software con IA<br/>En formación</p></div><div><h3>EXPERIENCE</h3><p>Desarrollo de productos<br/>Sistemas para negocios<br/>Proyectos de datos</p></div></div><h3>LANGUAGE</h3><p>Español · Inglés en aprendizaje</p></div></div>
   </section>
